@@ -1,12 +1,14 @@
 import express from 'express'
 import { admin, create, save } from '../controllers/propertyController.js'
 import { body } from 'express-validator'
+import protectRoute from '../middleware/protectRoute.js'
 
 const router = express.Router()
 
-router.get('/my-properties', admin)
-router.get('/properties/create', create)
-router.post('/properties/create', 
+router.get('/my-properties', protectRoute , admin)
+router.get('/properties/create', protectRoute , create)
+router.post('/properties/create',
+    protectRoute,
     body('title').notEmpty().withMessage('Title is required'),
     body('description')
         .notEmpty().withMessage('Description is required')
