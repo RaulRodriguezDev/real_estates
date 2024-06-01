@@ -1,12 +1,9 @@
 import { validationResult } from 'express-validator'
-import Category from '../models/Category.js'
-import Price from '../models/Price.js'
-import Property from '../models/Property.js'
+import { Property, Price, Category } from '../models/index.js'
 
 const admin = (req, res) => {
     res.render('properties/admin',{
         page: 'My properties',
-        navbar: true
     })
 }
 
@@ -19,7 +16,6 @@ const create = async (req, res) => {
 
     res.render('properties/create',{
         page: 'Create property',
-        navbar: true,
         csrfToken: req.csrfToken(),
         categories,
         prices,
@@ -31,45 +27,70 @@ const save = async (req, res) => {
     let result = validationResult(req)
 
     if(!result.isEmpty()){
+        console.log(req.body)
         const [categories, prices] = await Promise.all([
             Category.findAll(),
             Price.findAll()
         ])
         res.render('properties/create',{
             page: 'Create property',
-            navbar: true,
             csrfToken: req.csrfToken(),
             categories,
             prices,
             errors: result.array(),
             data: req.body
         })
-        
-        const { title, description, rooms, parkings, wc, street, latitude, longitude, price: priceId, category: categoryId } = req.body
-        const { id: userId } = req.user
-
-        try {
-            const propertySaved = await Property.create({
-                title,
-                description,
-                rooms,
-                parkings,
-                wc,
-                street,
-                latitude,
-                longitude,
-                priceId,
-                categoryId,
-                userId,
-                image: ''
-            })
-
-            const { id } = propertySaved
-            res.redirect(`/properties/add-image/${id}`)
-        } catch (error) {
-            
-        }
     }
+    const { title, description, rooms, parkings, wc, street, latitude, longitude, price: priceId, category: categoryId } = req.body
+    const { id: userId } = req.user
+
+    try {
+        const propertySaved = await Property.create({
+            title,
+            description,
+            rooms,
+            parkings,
+            wc,
+            street,
+            latitude,
+            longitude,
+            priceId,
+            categoryId,
+            userId,
+            image: ''
+        })
+
+        const { id: propertyId } = propertySaved
+        console.log(propertyId)
+        res.redirect(`/properties/add-image/${propertyId}`)
+    } catch (error) {
+        console.log(error)
+    }
+    
 }
 
-export { admin, create, save }
+const addImage = async (req, res) => {
+
+    const { id } = req.params
+    const property = await Property.findByPk(id)
+
+    if(!property){
+        res.redirect('/properties')
+    }
+
+    if(property.published){
+        res.redirect('/properties')
+    }
+
+    if(property.userId.toString() !== req.user.id.toString()){
+        res.redirect('/properties')
+    }
+
+    res.render('properties/add-image',{
+        page: `Add Image for ${property.title}`,
+        property,
+        csrfToken: req.csrfToken()
+    })
+}
+
+export { admin, create, save, addImage }

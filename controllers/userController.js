@@ -58,7 +58,7 @@ const authenticate = async (req, res) => {
 
     return res.cookie('_token', token, {
     httpOnly: true,
-    }).redirect('/my-properties')
+    }).redirect('/properties')
 
 }
 const formRegister = (req, res) => {

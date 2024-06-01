@@ -12,7 +12,6 @@ const protectRoute = async(req, res, next) => {
     try {
         const decoded = jwt.verify(_token, process.env.JWT_SECRET)
         const user = await User.scope('deleteSensibleInfo').findByPk(decoded.id)
-
         if(user){
             req.user = user
         } else {
@@ -20,7 +19,6 @@ const protectRoute = async(req, res, next) => {
         }
 
     } catch (error) {
-        
         return res.clearCookie('_token').redirect('/auth/login')
     }
 

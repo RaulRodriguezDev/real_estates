@@ -1,11 +1,11 @@
 import express from 'express'
-import { admin, create, save } from '../controllers/propertyController.js'
+import { addImage, admin, create, save } from '../controllers/propertyController.js'
 import { body } from 'express-validator'
 import protectRoute from '../middleware/protectRoute.js'
 
 const router = express.Router()
 
-router.get('/my-properties', protectRoute , admin)
+router.get('/properties', protectRoute , admin)
 router.get('/properties/create', protectRoute , create)
 router.post('/properties/create',
     protectRoute,
@@ -19,7 +19,13 @@ router.post('/properties/create',
     body('parkings').isNumeric().withMessage('Select at least one parking '),
     body('wc').isNumeric().withMessage('Select at least one wc'),
     body('latitude').notEmpty().withMessage('The location is required'),
+    (req, res, next) => {
+        console.log('This is the first middleware')
+        next()
+    },
     save
 )
+router.get('/properties/add-image/:id', protectRoute , addImage)
+router.post('/properties/add-image/:id', protectRoute , addImage)
 
 export default router
