@@ -1,11 +1,10 @@
 import { Dropzone } from 'dropzone'
-import { header } from 'express-validator'
 
 const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
 
-Dropzone.options.property_image = {
+Dropzone.options.propertyImage = {
     acceptedFiles: '.jpg, .png, .jpeg',
-    dictDefaultMessage: 'Drop images here to upload',
+    dictDefaultMessage: 'Drag an image here to upload, or click to select one',
     maxFilesize: 5,
     maxFiles: 1,
     parallelUploads: 1,
@@ -14,5 +13,20 @@ Dropzone.options.property_image = {
     dictRemoveFile: 'Remove image',
     headers: {
         'CSRF-Token': token
+    },
+    paramName: 'image',
+    init: function(){
+        const dropzone = this
+        const publishButton = document.querySelector('#publish')
+
+        publishButton.addEventListener('click', function() {
+            console.log('Publishing')
+            dropzone.processQueue()
+        })
+
+        dropzone.on('queuecomplete', function(){
+            if(dropzone.getActiveFiles().length == 0) 
+                window.location.href = '/properties'
+        })
     }
 }

@@ -61,7 +61,6 @@ const save = async (req, res) => {
         })
 
         const { id: propertyId } = propertySaved
-        console.log(propertyId)
         res.redirect(`/properties/add-image/${propertyId}`)
     } catch (error) {
         console.log(error)
@@ -93,4 +92,34 @@ const addImage = async (req, res) => {
     })
 }
 
-export { admin, create, save, addImage }
+const saveImage = async (req, res, next) => {
+    const { id } = req.params
+    const property = await Property.findByPk(id)
+
+    if(!property){
+        res.redirect('/properties')
+    }
+
+    if(property.published){
+        res.redirect('/properties')
+    }
+
+    if(property.userId.toString() !== req.user.id.toString()){
+        res.redirect('/properties')
+    }
+
+    try{
+
+        const { file } = req
+        console.log(file)
+        property.image = file.filename
+        property.published = true
+        await property.save()
+        next()
+
+    } catch (error){
+        console.log(error)
+    }
+}
+
+export { admin, create, save, addImage, saveImage }

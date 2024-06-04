@@ -10,9 +10,9 @@ block content
         h2(class="text-center text-2xl font-extrabold")= page
 
         div(class="bg-white shadow py-8 px-4 rounded mx-auto max-w-4xl my-10 md:px-10")
-            form(id="property_image" class="dropzone border-dashed border-2 w-full min:h-96 h-auto rounded flex-col justify-center items-center" action=`porperties/add-image/${property.id}` method="POST")
+            form(id="property_image" class="dropzone border-dashed border-2 w-full min:h-96 h-auto rounded flex-col justify-center items-center" action=`/properties/add-image/${property.id}` method="POST")
                 input(type="hidden" name="_csrf" value= csrfToken)
-            input(class="mt-5 w-full py-3 bg-indigo-600 hover:bg-indigo-800 rounded text-white font-bold uppercase cursor-pointer"
-            type="submit" value="Publish Property")
+            button(id= "publish" class="mt-5 w-full py-3 bg-indigo-600 hover:bg-indigo-800 rounded text-white font-bold uppercase cursor-pointer"
+            type="submit") Publish Property
 block scripts 
     script(src="/js/addImage.js")
