@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "bienes_raices": "file:",
     "cookie-parser": "^1.4.6",
     "csurf": "^1.11.0",
     "dotenv": "^16.3.1",
